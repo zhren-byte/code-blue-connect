@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap"); */
 * {
   outline: none;
   box-sizing: border-box;
@@ -171,7 +171,7 @@ body.light-mode .video-bg:before {
   margin: 0 30px 0 0;
 }
 .header-menu a {
-  padding: 17px 30px;
+  padding: 20px 30px;
   text-decoration: none;
   color: var(--inactive-color);
   border-bottom: 2px solid transparent;
@@ -1158,10 +1158,11 @@ body.light-mode .video-bg:before {
 .dropdown.is-active ul, .dropdown-notify.is-active ul  {
   opacity: 1;
   pointer-events: all;
-  transform: translateY(25px);
+  transform: translateY(0px);
 }
 .dropdown.is-active ul li:hover, .dropdown-notify.is-active ul li:hover {
   background-color: var(--dropdown-hover);
+  border-radius: 13px;
 }
 
 .button-wrapper {

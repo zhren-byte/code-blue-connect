@@ -5,14 +5,14 @@
         $_SESSION['error']   = 'Logueate';
         return print('
             <script>
-                window.location = "./login.php";
+                window.location = "./auth/";
             </script>
         ');
     }
     if (isset($_SESSION['user'])) {
         $rol_id = $_SESSION['user']['rol_id'];
         if ($rol_id == 1) {
-            return header("Location: ./dashboard.php");
+            return header("Location: ./dashboard");
         }
     }
 ?>
@@ -24,7 +24,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="./assets/js/jquery.min.js"></script>
     <title>&lt; \ BlueConnect \ Inicio &gt;</title>
     <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
 </head>
@@ -40,8 +40,8 @@
         <div class="header">
             <div class="menu-circle"></div>
             <div class="header-menu">
-                <a class="menu-link is-active" href="#botonazul">Boton Azul</a>
-                <a class="menu-link " href="#fichamedica">Ficha Medica</a>
+                <a class="menu-link is-active" href="#boton-azul">Boton Azul</a>
+                <a class="menu-link " href="#ficha-medica">Ficha Medica</a>
             </div>
             <div class="search-bar">
                 <input type="text" placeholder="Search">
@@ -60,7 +60,7 @@
                         src="https://images.unsplash.com/photo-1600353068440-6361ef3a86e8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
                         alt="">
                 </a>
-                <a href="../auth/logout">
+                <a href="./auth/logout">
                     <svg viewBox="0 0 24 24" fill="currentColor" height="24" width="24" focusable="false"
                         class="logout">
                         <path
@@ -72,14 +72,14 @@
         </div>
         <div class="wrapper">
             <div class="main-container">
-                <div class="content-wrapper" id="botonazul">
+                <div class="content-wrapper" id="boton-azul">
                     <div class="content-section">
                         <div style="display: flex; justify-content: center; align-items: center; height: 100%">
                             <button id="button" onclick="alert('quepasape')"></button>
                         </div>
                     </div>
                 </div>
-                <div class="content-wrapper" id="fichamedica">
+                <div class="content-wrapper" id="ficha-medica">
                     <div class="content-section">
                         <h2>HEllo</h2>
                     </div>
