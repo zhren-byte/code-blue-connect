@@ -257,7 +257,7 @@ $id = $_SESSION['user']['id'];
                             if ($result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) { ?>
                                     <tr>
-                                        <td><?php echo $row["name"] ?></td>
+                                        <td onclick="this.parentElement.classList.toggle('is-active')" style="font-size: 18px;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" style=" margin-right: 10px" fill="currentColor"  class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg><?php echo $row["name"] ?></td>
                                         <td>
                                             <div class="button-wrapper">
                                                 <a href="./dashboard?id=<?php echo $row['id'] ?>&table=zonas"><button
@@ -272,12 +272,43 @@ $id = $_SESSION['user']['id'];
                                             </div>
                                         </td>
                                     </tr>
-                                <?php }
+                                    <?php $ubiQuery = $conn->query("SELECT id, name FROM ubicaciones WHERE zone_id=$row[id]");
+                                    if ($ubiQuery->num_rows > 0) { ?>
+                                    <tr class="dropdown-list">
+                                        <?php while ($ubi = $ubiQuery->fetch_assoc()) { ?>
+                                            <td><?php echo $ubi['name'] ?></td>
+                                            <td>
+                                                <div class="button-wrapper">
+                                                    <a href="./dashboard?id=<?php echo $ubi['id'] ?>&table=ubicaciones"><button
+                                                            class='content-button status-button open'>Editar</button></a>
+                                                    <div class="menu">
+                                                        <button class="dropdown">
+                                                            <ul>
+                                                                <li><a href="./delete?id=<?php echo $ubi["id"] ?>&table=ubicaciones">Borrar</a></li>
+                                                            </ul>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        <?php } ?>
+                                    </tr>
+                                <?php } ?>
+                                    <tr class="dropdown-create">
+                                        <form action="./create">
+                                        <td><input type="text" name="name_ubi" placeholder="Nombre"><input type="hidden" value="<?php $row['name'] ?>"></td>
+                                        <td>
+                                            <div class="button-wrapper">
+                                                <button class='content-button status-button'>Agregar</button>
+                                            </div>
+                                        </td>
+                                        </form>
+                                    </tr> <?php
+                                }
                             }
                             ?>
                             <tr>
                                 <form action="./create" method="post">
-                                    <td><input type="text" name="name" id="name" placeholder="Nombre"></td>
+                                    <td><input type="text" name="name_zona" placeholder="Nombre"></td>
                                     <td>
                                         <div class="button-wrapper">
                                             <button class='content-button status-button' name="zones"
@@ -538,12 +569,10 @@ $id = $_SESSION['user']['id'];
                                                     $result = $conn->query("SELECT * FROM zonas");
                                                     if ($result->num_rows > 0) {
                                                         while ($row = $result->fetch_assoc()) {
-                                                            if($user['zone_id'] == $row['id']){
+                                                            if($user['zone_id'] == $row['id'])
                                                                 echo "<option value='$row[id]' selected>$row[name]</option>";
-                                                            }else{
+                                                            else 
                                                                 echo "<option value='$row[id]'>$row[name]</option>";
-                                                            }
-                                                            
                                                         }
                                                     }
                                                     ?>
@@ -551,8 +580,7 @@ $id = $_SESSION['user']['id'];
                                             </td>
                                             <td>
                                                 <div class="button-wrapper">
-                                                    <button class='content-button status-button' type="submit"
-                                                        name="account">Aceptar</button>
+                                                    <button class='content-button status-button' type="submit" name="account">Aceptar</button>
                                                 </div>
                                             </td>
                                         </form>

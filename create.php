@@ -13,7 +13,7 @@
         }
     }
     if (isset($_POST['zones'])) {
-        $name = $_POST['name'];
+        $name = $_POST['name_zona'];
 
         if ($conn->query("INSERT INTO `zonas` (`id`, `name`) VALUES (NULL, '$name')")) {
             header('Location: ./dashboard#zonas');
@@ -23,6 +23,16 @@
     }
     if (isset($_POST['enfermeros'])) {
         $user = $_POST['user_id'];
+        $zone = $_POST['zone_id'];
+
+        if ($conn->query("INSERT INTO `enfermeros` (`id`, `user_id`, `zone_id`) VALUES (NULL, $user, $zone)")) {
+            header('Location: ./dashboard#enfermeros');
+        } else {
+            echo $conn->error;
+        }
+    }
+    if (isset($_POST['ubicaciones'])) {
+        $name = $_POST['name_ubi'];
         $zone = $_POST['zone_id'];
 
         if ($conn->query("INSERT INTO `enfermeros` (`id`, `user_id`, `zone_id`) VALUES (NULL, $user, $zone)")) {

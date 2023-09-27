@@ -823,6 +823,21 @@ body.light-mode .video-bg:before {
   text-align: left;
   transition: 0.3s;
 }
+.content-section table tr.dropdown-list{
+  display: none;
+}
+.content-section table tr.dropdown-create{
+  display: none;
+}
+.content-section table tr.is-active + tr.dropdown-list{
+  display: table-row;
+}
+.content-section table tr.is-active + tr.dropdown-create{
+  display: table-row;
+}
+.content-section table tr.is-active + tr.dropdown-list + tr.dropdown-create{
+  display: table-row;
+}
 .content-section table tr:last-child .status-button {
   padding: 6px 17px;
 }
@@ -1007,8 +1022,8 @@ body.light-mode .video-bg:before {
   width: 100px;
   margin-right: 10px;
   text-align: center;
-
 }
+
 @media screen and (max-width: 480px) {
   .products {
     width: 120px;
