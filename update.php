@@ -13,6 +13,14 @@
         $values = 
         "`name`='$name', `user`='$username', `password`='$password', `rol_id`='$rol_id'";
     }
+    if ($table == 'notificaciones') {
+        $time = date('H:i:s');
+        $values = "`status_id` = $_GET[status_id], `time_response` = '$time'";
+        if ($conn->query("UPDATE `notificaciones` SET $values WHERE `id`=$id"))
+            return;
+        else
+            return print $SQL .' ||| \n '. $conn->error;
+    }
 
     if ($conn->query("UPDATE `$table` SET $values WHERE `id`=$id"))
         header('Location: ./dashboard');

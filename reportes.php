@@ -10,6 +10,7 @@ if (!isset($_SESSION['user'])) {
     ');
 }
 $id = $_SESSION['user']['id'];
+$zonas = $conn->query("SELECT id, name FROM `zonas`");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -131,6 +132,36 @@ $id = $_SESSION['user']['id'];
                 </div>
                 <div class="content-wrapper" id="llamados">
                     <div class="content-section">
+                        <ul>
+                            <?php
+                                $query = "SELECT notificaciones.id, notificaciones.status_id, notificaciones.date, notificaciones.time, zonas.name AS zona, llamados.name AS tipo FROM notificaciones INNER JOIN zonas ON notificaciones.zone_id = zonas.id INNER JOIN llamados ON notificaciones.type_id = llamados.id";
+                                if(isset($_GET['search'])){
+                                    $query = $query . " WHERE zonas.name = 'Pasillo'";
+                                }
+                                $result = $conn->query($query);
+                                if ($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) { 
+                                        print("
+                                            <li>
+                                                <div class=\"products\"><span class=\"datetime\">$row[date] $row[time]</span><strong>$row[tipo]</strong>$row[zona]</div>
+                                        ");
+                                        print("<span class=\"status\">");
+                                        if($row['status_id'] == 0) print "<span class='status-circle red'></span>No atendido";else print "<span class='status-circle green'></span>Atendido";
+                                        print("</span>");
+                                        print("<div class=\"button-wrapper\">");
+                                        if($row['status_id'] == 0) print "<a onClick=\"resolver(this)\" data-update=\"$row[id],true\"><button class='content-button status-button'>Resolver</button></a>";else print "<a onClick=\"resolver(this)\" data-update=\"$row[id],false\"><button class='content-button status-button open'>Resuelto</button></a>";
+                                        print("
+                                                    <div class=\"menu\">
+                                                        <button class=\"dropdown\">
+                                                            <ul><li><a onClick=\"borrar(this)\" data-delete=\"$row[id]\">Borrar</a></li></ul>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </li>");
+                                    }
+                                }
+                            ?>
+                        </ul>
                     </div>
                 </div>
                 <div class="content-wrapper" id="graficos">
@@ -142,7 +173,7 @@ $id = $_SESSION['user']['id'];
     <div class="overlay-app"></div>
     </div>
     <script>
-        let target = $(location).attr('hash').substring(0, $(location).attr('hash').indexOf("?")) || $(location).attr('hash') || '#ficha-medica';
+        let target = $(location).attr('hash').substring(0, $(location).attr('hash').indexOf("?")) || $(location).attr('hash') || '#llamados';
         $('.main-container > div + div').not(target).hide();
         $(target).fadeIn(600);
         $('.main-header .header-menu a').on('click', function (e) {
@@ -184,6 +215,36 @@ $id = $_SESSION['user']['id'];
         document.querySelector('.dark-light').addEventListener('click', () => {
             document.body.classList.toggle('light-mode');
         });
+        function resolver(e){
+            const data = e.getAttribute("data-update").split(',');
+            $.ajax({
+                type:"GET",
+                url: "./update.php",
+                data: { id: data[0], table: 'notificaciones', status_id: data[1] },
+                success: () => {
+                    if(data[1] == 'true'){
+                        e.parentElement.parentElement.children[1].innerHTML = `<span class='status-circle green'></span>Atendido`
+                        e.outerHTML = `<a onClick=\"resolver(this)\" data-update=\"${data[0]},false\"><button class='content-button status-button open'>Resuelto</button></a>`
+                    }else{
+                        e.parentElement.parentElement.children[1].innerHTML = `<span class='status-circle red'></span>No atendido`
+                        e.outerHTML = `<a onClick="resolver(this)" data-update="${data[0]},true"><button class='content-button status-button'>Resolver</button></a>`
+                    }
+                }
+            })
+        }
+        function borrar(e){
+            const data = e.getAttribute("data-delete");
+            console.log(data)
+            $.ajax({
+                type:"GET",
+                url: "./delete.php",
+                data: { id: data, table: 'notificaciones'},
+                success: () => {
+                    e.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.outerHTML = ''
+                    $(".content-wrapper").removeClass("overlay");
+                }
+            })
+        }
     </script>
 </body>
 

@@ -443,7 +443,7 @@ body.light-mode .video-bg:before {
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
-  height: 58px;
+  height: 53px;
   flex-shrink: 0;
 }
 @media screen and (max-width: 1055px) {
@@ -580,7 +580,54 @@ body.light-mode .video-bg:before {
     width: 110px;
   }
 }
-
+.modal-medico{
+  background-color: var(--dropdown-bg);
+  border: 1px solid var(--theme-bg-color);
+  display: flex;
+  position: fixed;
+  flex-direction: column;
+  top: 50%;
+  min-width: 450px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 14px;
+  padding: 1rem;
+  transition: opacity .5s;
+  width: 742px;
+  height: 519px;
+  overflow-y: scroll;
+  color: #fff;
+}
+.modal-medico .header-menu{
+  justify-content: space-between;
+}
+.modal-medico .header-menu span{
+  font-size: 2rem;
+  font-weight: bold;
+  margin-left: 1rem;
+  color: var(--theme-color)
+}
+.modal-medico .close-button{
+  color: #fff;
+  padding: 1rem;
+  opacity: 0.7;
+  cursor: pointer;
+  display: flex;
+}
+.modal-medico .container{
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.modal-medico .container .nombre{
+  font-size: 2rem;
+}
+.modal--show{
+  opacity: 1;
+  pointer-events: unset;
+}
 .modal {
   background: #2228;
   display: flex;
@@ -593,12 +640,6 @@ body.light-mode .video-bg:before {
   opacity: 0;
   pointer-events: none;
   transition: opacity .5s;
-}
-.modal-pc{
-  width: 742px;
-  height: 519px;
-  overflow-y: scroll;
-  color: #fff;
 }
 .modal-pc .container{
   display: flex;
@@ -702,26 +743,6 @@ body.light-mode .video-bg:before {
   font-weight: 600;
   cursor: pointer;
 }
-.modal-notification .header-menu{
-  justify-content: space-between;
-}
-.modal-notification .header-menu span{
-  font-size: 2rem;
-  font-weight: bold;
-  margin-left: 1rem;
-  color: var(--theme-color)
-}
-.modal-notification .close-button{
-  color: #fff;
-  padding: 1rem;
-  opacity: 0.7;
-  cursor: pointer;
-  display: flex;
-}
-.modal--show{
-  opacity: 1;
-  pointer-events: unset;
-}
 .modal .container {
   display: flex;
   align-items: center;
@@ -784,7 +805,6 @@ body.light-mode .video-bg:before {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
 }
 .content-section-title {
   color: var(--content-title-color);
@@ -885,7 +905,6 @@ body.light-mode .video-bg:before {
   border-radius: 0;
   border: none; 
 }
-
 .content-section ul .dropdown-list li {
   padding:0;
 }
@@ -915,100 +934,80 @@ body.light-mode .video-bg:before {
   margin-right: 16px;
   flex-shrink: 0;
 }
-#rooms{
-  display: flex;
-  background: var(--search-bg);
-  flex-direction: column;
-  width: 500px;
-  border-radius: 20px;
-  margin: auto;
-}
-#rooms .room{
-  background: var(--overlay-bg);
-  display: flex;
-  justify-content: space-between;
-  border-radius: 20px;
-  align-items: center;
-  padding: 6px 8px;
-  margin: 6px;
-  font-size: 20px;
-}
-#rooms button{
-  color: var(--access-color);
-  padding: 4px 15px;
+.content-section .ficha-medica{
+  background-color: var(--search-bg);
+  margin-top: 30px;
+  margin-bottom: 30px;
   border-radius: 30px;
-  border: 1px var(--border-color) solid;
-  background: none;
-  outline: none;
-  font-family: var(--body-font);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-}
-#controls{
-  width: 100%;
-  height: 80%;
+  height: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  padding: 20px;
 }
-#controls.emitir{
-  position: absolute;
-  bottom: 0;
-  height: fit-content;
-  z-index: 10;
-}
-#exposicion button{
-  color: var(--access-color);
-  padding: 4px 15px;
-  border-radius: 30px;
-  border: 1px var(--border-color) solid;
-  background: none;
-  outline: none;
-  font-family: var(--body-font);
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-weight: 600;
-  cursor: pointer;
-}
-#controls input[type=number], #controls input[type=text]{
-  width: 200px;
-  padding: 0 6px 0 12px;
-  font-size: 23px;
+.content-section .ficha-medica input{
+  font-size: 1.6rem;
+  padding: 5px;
+  margin-bottom: 10px;
   background-color: var(--popup-bg);
   border: none;
-  margin-right: 20px;
   color: var(--theme-color);
   font-family: var(--body-font);
-  border-radius: 30px;
+  border-radius: 5px;
 }
-#controls button{
+.content-section .ficha-medica input[type=checkbox]{
+  margin-right: 10px;
+}
+.content-section .ficha-medica .info{
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+  padding: 0 10px;
+}
+.content-section .ficha-medica button {
+  margin-top: 5px;
   color: var(--access-color);
-  padding: 4px 15px;
+  padding: 4px 26px;
+  width: 100%;
   border-radius: 30px;
   border: 1px var(--border-color) solid;
   background: none;
   outline: none;
   font-family: var(--body-font);
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  font-size: 2rem;
   font-weight: 600;
   cursor: pointer;
-  margin-right: 10px;
 }
-#controls button.active{
-  background-color: #00aba7;
-  color: black;
+.content-section .ficha-medica span{
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+.content-section .ficha-medica .diseases{
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+  padding: 0 10px;
+}
+.content-section .ficha-medica .diseases .bloque{
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.content-section .ficha-medica .diseases label{
+  font-size: 1.6rem;
+  display: flex;
+  width: 115px;
+  white-space: nowrap;
 }
 .products {
   display: flex;
   align-items: center;
-  width: 150px;
+  width: 100%;
+}
+.products strong{
+  width: 100px;
+  margin-right: 10px;
+  text-align: center;
+
 }
 @media screen and (max-width: 480px) {
   .products {
@@ -1018,7 +1017,7 @@ body.light-mode .video-bg:before {
 
 .status {
   margin-left: auto;
-  width: 500px;
+  width: 130px;
   font-size: 15px;
   position: relative;
 }
@@ -1358,11 +1357,12 @@ body.light-mode .video-bg:before {
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
   margin: 0;
+  -webkit-appearance: none;
 }
 
 /* Firefox */
 input[type=number] {
+  appearance: textfield;
   -moz-appearance: textfield;
 }

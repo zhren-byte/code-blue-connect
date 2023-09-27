@@ -110,15 +110,10 @@ $id = $_SESSION['user']['id'];
             <div class="main-container">
                 <div class="main-header">
                     <div class="header-menu">
-                        <a class="main-header-link is-active" href="#ficha-medica">Ficha Medica</a>
                         <a class="main-header-link" href="#usuarios">Usuarios</a>
                         <a class="main-header-link" href="#zonas">Zonas</a>
                         <a class="main-header-link" href="#enfermeros">Enfermeros</a>
                         <a class="main-header-link" href="#pacientes">Pacientes</a>
-                    </div>
-                </div>
-                <div class="content-wrapper" id="ficha-medica">
-                    <div class="content-section">
                     </div>
                 </div>
                 <div class="content-wrapper" id="usuarios">
@@ -493,20 +488,21 @@ $id = $_SESSION['user']['id'];
                         <table>
                             <tr>
                                 <th>Nombre</th>
-                                <th style="width: 160px;">Zona</th>
-                                <th style="width: 150px;">Opciones</th>
+                                <th>Apellido</th>
+                                <th style="width: 150px;">Zona</th>
+                                <th style="width: 200px;">Opciones</th>
                             </tr>
                             <?php
-                            $result = $conn->query("SELECT * FROM pacientes");
+                            $result = $conn->query("SELECT pacientes.id,pacientes.name, pacientes.surname, zonas.name AS zona FROM pacientes INNER JOIN zonas ON pacientes.zone_id = zonas.id");
                             if ($result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) { ?>
                                     <tr>
                                         <td><?php echo $row["name"] ?></td>
+                                        <td><?php echo $row["surname"] ?></td>
                                         <td><?php echo $row["zona"] ?></td>
                                         <td>
                                             <div class="button-wrapper">
-                                                <a href="./dashboard?id=<?php echo $row['id'] ?>&table=enfermeros#enfermeros"><button
-                                                        class='content-button status-button'>Ficha Medica</button></a>
+                                                <button class='content-button status-button' data-id="<?php echo $row["id"] ?>" onclick="medica(this)">Ficha Medica</button>
                                                 <div class="menu">
                                                     <button class="dropdown">
                                                         <ul>
@@ -521,39 +517,11 @@ $id = $_SESSION['user']['id'];
                                 <?php }
                             }
                             ?>
-                            <tr>
-                                <form action="./create" method="post">
-                                    <td>
-                                        <select name="user_id" id="user_id">
-                                            <?php
-                                            $result = $conn->query("SELECT * FROM usuarios WHERE rol_id=2");
-                                            if ($result->num_rows > 0) {
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo "<option value='$row[id]'>$row[name]</option>";
-                                                }
-                                            }
-                                            ?>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select name="zone_id" id="zone_id">
-                                            <?php
-                                            $result = $conn->query("SELECT * FROM zonas");
-                                            if ($result->num_rows > 0) {
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo "<option value='$row[id]'>$row[name]</option>";
-                                                }
-                                            }
-                                            ?>
-                                        </select>
-                                    </td>
-                                </form>
-                            </tr>
                         </table>
                         <?php
                         if (isset($_GET['id']) || isset($_GET['table'])) {
                             if ($_GET['table'] == 'pacientes') {
-                                $user = $conn->query("SELECT zone_id, user_id, id FROM enfermeros WHERE `id`=$_GET[id]" )->fetch_assoc();
+                                $user = $conn->query("SELECT zone_id, name, surname, id FROM pacientes WHERE `id`=$_GET[id]" )->fetch_assoc();
                                 ?>
                                 <table>
                                     <tr>
@@ -563,22 +531,7 @@ $id = $_SESSION['user']['id'];
                                     </tr>
                                     <tr>
                                         <form action="./update?id=<?php echo $user['id'] ?>&table=enfermeros" method="post">
-                                            <td>
-                                                <select name="user_id" id="user_id">
-                                                    <?php
-                                                    $result = $conn->query("SELECT * FROM usuarios WHERE rol_id=2");
-                                                    if ($result->num_rows > 0) {
-                                                        while ($row = $result->fetch_assoc()) {
-                                                            if($user['user_id'] == $row['id']){
-                                                                echo "<option value='$row[id]' selected>$row[name]</option>";
-                                                            }else{
-                                                                echo "<option value='$row[id]'>$row[name]</option>";
-                                                            }
-                                                        }
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </td>
+                                            <td><input type="text" name="name" id="name_new" placeholder="Nombre" value="<?php echo $user['name'] ?>"></td>
                                             <td>
                                                 <select name="zone_id" id="zone_id">
                                                     <?php
@@ -608,13 +561,24 @@ $id = $_SESSION['user']['id'];
                         <?php }
                         } ?>
                     </div>
+                    <div class="modal-medico">
+                        <div class="header-menu">
+                            <span>Ficha Médica</span>
+                            <div href="#" class="close-button">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="container"></div>
+                    </div>
                 </div>
             </div>
         </div>
     <div class="overlay-app"></div>
     </div>
     <script>
-        let target = $(location).attr('hash').substring(0, $(location).attr('hash').indexOf("?")) || $(location).attr('hash') || '#ficha-medica';
+        let target = $(location).attr('hash').substring(0, $(location).attr('hash').indexOf("?")) || $(location).attr('hash') || '#usuarios';
         $('.main-container > div + div').not(target).hide();
         $(target).fadeIn(600);
         $('.main-header .header-menu a').on('click', function (e) {
@@ -634,6 +598,9 @@ $id = $_SESSION['user']['id'];
                 document.querySelectorAll(".dropdown").forEach((c) => c.classList.remove("is-active"));
                 dropdown.classList.add("is-active");
             });
+        });
+        document.querySelector(".modal-medico .close-button").addEventListener("click", (e) => {
+            document.querySelector(".modal-medico").classList.remove("modal--show");
         });
         $(document).click(function (e) {
             const container = $(".status-button");
@@ -656,6 +623,32 @@ $id = $_SESSION['user']['id'];
         document.querySelector('.dark-light').addEventListener('click', () => {
             document.body.classList.toggle('light-mode');
         });
+        function medica(e){
+            $.ajax({
+                type: "POST",
+                url: 'ficha-medica.php',
+                data: { id: e.getAttribute("data-id") },
+                success: function(response) {
+                    let res = JSON.parse(response);
+                    if(res){
+                        document.querySelector(".modal-medico .container").innerHTML = ``
+                        document.querySelector(".modal-medico .container").innerHTML += `
+                            <span class="nombre">${res.name} ${res.surname}</span>
+                            <span>DNI: ${res.dni}</span>
+                            <span>Fecha de Nacimiento${res.birthday}</span>
+                            <span>Telefono: ${res.phone}</span>
+                            <span>Direccion: ${res.direction} N°${res.number} Piso: ${res.floor} Dto. ${res.department}</span>
+                            <span>Localidad: ${res.location}</span>
+                            <span>Enfermedades padecidas: ${res.diseases}</span>
+                            <span>Vacunas: ${res.vaccines}</span>
+                            <span>Medicinas que no debe tomar: ${res.medicines}</span>
+                            <span>Alergias: ${res.allergies}</span>
+                        `
+                        document.querySelector(".modal-medico").classList.add('modal--show')
+                    }
+                }
+            });
+        }
     </script>
 </body>
 
