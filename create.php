@@ -21,6 +21,16 @@
             echo $conn->error;
         }
     }
+    if (isset($_POST['ubicacion'])) {
+        $name = $_POST['name_ubi'];
+        $zone = $_POST['zone_id'];
+
+        if ($conn->query("INSERT INTO `ubicaciones` (`id`, `name`, `zone_id`) VALUES (NULL, '$name', $zone)")) {
+            header('Location: ./dashboard#zonas');
+        } else {
+            echo $conn->error;
+        }
+    }
     if (isset($_POST['enfermeros'])) {
         $user = $_POST['user_id'];
         $zone = $_POST['zone_id'];

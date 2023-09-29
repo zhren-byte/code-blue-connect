@@ -12,7 +12,11 @@
         }
     }
     if ($conn->query("DELETE FROM $table WHERE `id`= $id")) {    
-        header('Location: ./dashboard');
+        if($table == 'ubicaciones'){
+            header('Location: ./dashboard#zonas');
+            return;
+        }
+        header('Location: ./dashboard#'. $table);
     } else {
         echo $conn->error;
     }

@@ -50,14 +50,33 @@
         <button data-zona="5" data-type="2" style="top: 235px;left: 375px;" class="green"></button> -->
     </div>
     <script>
+        <?php
+            include('./connection.php');
+            $select = $conn->query('SELECT * FROM notificaciones');
+            $selects = array();
+            while($row = $select->fetch_assoc()){
+                array_push($selects, $row['time'].',' .$row['time_response']);
+            }
+        ?>
+        function getSec(time){
+            let hms = time.split(':');
+            return (hms[0]*3600+parseInt(hms[1])*60+parseInt(hms[2]));
+        }
+        let resTime = JSON.parse('<?php echo json_encode($selects); ?> ');
+        resTime.forEach(e => {
+            let time = getSec(e.split(',')[0]);
+            let response = getSec(e.split(',')[1]);
+            let responseTime = response - time;
+            console.log(responseTime)
+        });
         document.querySelectorAll('.zonas button').forEach(e => {
             e.addEventListener('click', (e) => {
-                let zona = e.srcElement.dataset.zona
+                let ubi = e.srcElement.dataset.zona
                 let type = e.srcElement.dataset.type
                 $.ajax({
                     type:"POST",
                     url: "./alerta.php",
-                    data: { zona, type },
+                    data: { ubi, type },
                     success: (res) => {
                         alert(res)
                     }
