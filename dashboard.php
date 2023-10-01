@@ -677,7 +677,7 @@ $id = $_SESSION['user']['id'];
             tmp.innerHTML = html;
             return tmp.textContent || tmp.innerText || "";
         }
-        
+        window.jsPDF = window.jspdf.jsPDF;
         function medica(e){
             $.ajax({
                 type: "POST",
@@ -692,7 +692,7 @@ $id = $_SESSION['user']['id'];
                         document.querySelector(".modal-medico .container").innerHTML += `
                             <span class="nombre">${res.name} ${res.surname}</span>
                             <span>DNI: ${res.dni}</span>
-                            <span>Fecha de Nacimiento${res.birthday}</span>
+                            <span>Fecha de Nacimiento: ${res.birthdate}</span>
                             <span>Telefono: ${res.phone}</span>
                             <span>Direccion: ${res.direction} N°${res.number} Piso: ${res.floor} Dto. ${res.department}</span>
                             <span>Localidad: ${res.location}</span>
@@ -700,13 +700,11 @@ $id = $_SESSION['user']['id'];
                             <span>Vacunas: ${res.vaccines}</span>
                             <span>Medicinas que no debe tomar: ${res.medicines}</span>
                             <span>Alergias: ${res.allergies}</span>
-                            
-
                         `
                         const content = `
-                            Nombre: ${stripHtml(res.name)} ${stripHtml(res.surname)}
+                            Nombre: ${res.name} ${stripHtml(res.surname)}
                             DNI: ${stripHtml(res.dni)}
-                            Fecha de Nacimiento: ${stripHtml(res.birthday)}
+                            Fecha de Nacimiento: ${stripHtml(res.birthdate)}
                             Teléfono: ${stripHtml(res.phone)}
                             Dirección: ${stripHtml(res.direction)} N°${stripHtml(res.number)} Piso: ${stripHtml(res.floor)} Dto. ${stripHtml(res.department)}
                             Localidad: ${stripHtml(res.location)}

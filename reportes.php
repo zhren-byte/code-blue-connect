@@ -263,12 +263,10 @@ $id = $_SESSION['user']['id'];
                             });
                             
                             download.addEventListener("click", function() {
-                                var imgData = ctx.toDataURL('image/jpeg', 1.0);
-                                var pdf = new jsPDF();
+                                const imgData = ctx.toDataURL('image/jpeg', 1.0);
+                                const pdf = new jsPDF();
                                 pdf.addImage(imgData, 'JPEG', 0, 0);
                                 pdf.save('reporte.pdf')
-                                
-
                             });
                         </script>
                     </div>
