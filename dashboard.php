@@ -20,6 +20,8 @@ $id = $_SESSION['user']['id'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles.css">
     <script src="./assets/js/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
     <title>&lt; \ BlueConnect \ Admin &gt;</title>
     <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
 </head>
@@ -670,6 +672,12 @@ $id = $_SESSION['user']['id'];
         document.querySelector('.dark-light').addEventListener('click', () => {
             document.body.classList.toggle('light-mode');
         });
+        function stripHtml(html) {
+            var tmp = document.createElement("DIV");
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || "";
+        }
+        
         function medica(e){
             $.ajax({
                 type: "POST",
@@ -678,6 +686,8 @@ $id = $_SESSION['user']['id'];
                 success: function(response) {
                     let res = JSON.parse(response);
                     if(res){
+                        const pdf = new jsPDF();
+                        window.jsPDF = window.jspdf.jsPDF;
                         document.querySelector(".modal-medico .container").innerHTML = ``
                         document.querySelector(".modal-medico .container").innerHTML += `
                             <span class="nombre">${res.name} ${res.surname}</span>
@@ -690,12 +700,30 @@ $id = $_SESSION['user']['id'];
                             <span>Vacunas: ${res.vaccines}</span>
                             <span>Medicinas que no debe tomar: ${res.medicines}</span>
                             <span>Alergias: ${res.allergies}</span>
+                            
+
                         `
+                        const content = `
+                            Nombre: ${stripHtml(res.name)} ${stripHtml(res.surname)}
+                            DNI: ${stripHtml(res.dni)}
+                            Fecha de Nacimiento: ${stripHtml(res.birthday)}
+                            Teléfono: ${stripHtml(res.phone)}
+                            Dirección: ${stripHtml(res.direction)} N°${stripHtml(res.number)} Piso: ${stripHtml(res.floor)} Dto. ${stripHtml(res.department)}
+                            Localidad: ${stripHtml(res.location)}
+                            Enfermedades padecidas: ${stripHtml(res.diseases)}
+                            Vacunas: ${stripHtml(res.vaccines)}
+                            Medicinas que no debe tomar: ${stripHtml(res.medicines)}
+                            Alergias: ${stripHtml(res.allergies)}
+                        `;
+                        pdf.text(content, 10, 10);
+                        pdf.save('ficha-medica.pdf');
                         document.querySelector(".modal-medico").classList.add('modal--show')
                     }
                 }
             });
         }
+        
+
         function borrar(e){
             const data = e.getAttribute("data-delete").split(',');
             console.log(data)
@@ -710,6 +738,7 @@ $id = $_SESSION['user']['id'];
             })
         }
     </script>
+    
 </body>
 
 </html>
