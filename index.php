@@ -10,13 +10,14 @@
         ');
     }
     if (isset($_SESSION['user'])) {
-        $rol_id = $_SESSION['user']['rol_id'];
-        if ($rol_id == 1) {
+        $user_id = $_SESSION['user']['id'];
+        if ($_SESSION['user']['rol_id'] == 1) {
             return header("Location: ./dashboard");
         }
     }
     $diseases = array('Covid-19', 'Varicela', 'Sarampion', 'Rubeola', 'Paperas', 'Tos', 'Epilepsia', 'Convulsiones', 'Diabetes', 'Asma', 'Anemia');
     $vaccines = array('Covid-19', 'Antitetanica', 'Carnet de vacunacion');
+    $zonas = $conn->query("SELECT ubicaciones.name, ubicaciones.id, zonas.name AS zona FROM enfermeros INNER JOIN zonas ON enfermeros.zone_id = zonas.id INNER JOIN ubicaciones ON zonas.id = ubicaciones.zone_id WHERE user_id = $user_id");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,7 +32,7 @@
     <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
 </head>
 
-<body class="light-mode">
+<body>
     <div class="dark-light">
         <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"
             stroke-linejoin="round">
@@ -44,9 +45,6 @@
             <div class="header-menu">
                 <a class="menu-link is-active" href="#boton-azul">Boton Azul</a>
                 <a class="menu-link " href="#ficha-medica">Ficha Medica</a>
-            </div>
-            <div class="search-bar">
-                <input type="text" placeholder="Search">
             </div>
             <div class="header-profile">
                 <a class="access" href="./account/">
@@ -66,51 +64,51 @@
         <div class="wrapper">
             <div class="main-container">
                 <div class="content-wrapper" id="boton-azul">
-                    <div class="content-section">
-                        <div style="display: flex; justify-content: center; align-items: center; height: 100%">
-                            <button id="button" onclick="alert('quepasape')"></button>
-                        </div>
+                    <div class="content-section" style="height: 100%; display: flex; flex-direction: row;">
+                            <?php while($row = $zonas->fetch_assoc()){ ?>
+                                <button id="button" data-zona="<?php echo $row['id'] ?>" onclick=newAlert(this)><?php echo $row['zona'] ?><br><?php echo $row['name'] ?></button>
+                            <?php } ?>
                     </div>
                 </div>
                 <div class="content-wrapper" id="ficha-medica">
                     <div class="content-section">
                         <form action="create-ficha" method="POST" class="ficha-medica">
-                                <div class="info">
-                                    <span>Nueva ficha medica</span>
-                                    <input type="text" name="surname" placeholder="Apellidos" required>
-                                    <input type="text" name="name" placeholder="Nombres" required>
-                                    <input type="number" name="dni" placeholder="DNI" required>
-                                    <input type="date" name="birthday" required>
-                                    <input type="number" name="phone" placeholder="N° de Celular">
-                                    <input type="text" name="direction" placeholder="Direccion">
-                                    <input type="number" name="number" placeholder="N°">
-                                    <input type="number" name="floor" placeholder="Piso">
-                                    <input type="text" name="department" placeholder="Dto.">
-                                    <input type="text" name="location" placeholder="Localidad" required>
+                            <div class="info">
+                                <span>Nueva ficha medica</span>
+                                <input type="text" name="surname" placeholder="Apellidos" required>
+                                <input type="text" name="name" placeholder="Nombres" required>
+                                <input type="number" name="dni" placeholder="DNI" required>
+                                <input type="date" name="birthday" required>
+                                <input type="number" name="phone" placeholder="N° de Celular">
+                                <input type="text" name="direction" placeholder="Direccion">
+                                <input type="number" name="number" placeholder="N°">
+                                <input type="number" name="floor" placeholder="Piso">
+                                <input type="text" name="department" placeholder="Dto.">
+                                <input type="text" name="location" placeholder="Localidad" required>
+                            </div>
+                            <div class="diseases">
+                                <span>¿Tiene o tuvo alguna de estas enfermedades?</span>
+                                <div class="bloque">
+                                    <?php
+                                        for($i=0; $i<count($diseases); $i++){
+                                            echo "<label><input type=\"checkbox\" name=\"diseases[]\" value=\"$diseases[$i]\">$diseases[$i]</label>";
+                                        }
+                                    ?>
                                 </div>
-                                <div class="diseases">
-                                    <span>¿Tiene o tuvo alguna de estas enfermedades?</span>
-                                    <div class="bloque">
-                                        <?php
-                                            for($i=0; $i<count($diseases); $i++){
-                                                echo "<label><input type=\"checkbox\" name=\"diseases[]\" value=\"$diseases[$i]\">$diseases[$i]</label>";
-                                            }
-                                        ?>
-                                    </div>
-                                    <span>Vacunas</span>
-                                    <div class="bloque">
-                                        <?php
-                                            for($i=0; $i<count($vaccines); $i++){
-                                                echo "<label><input type=\"checkbox\" name=\"vaccines[]\" value=\"$vaccines[$i]\">$vaccines[$i]</label>";
-                                            }
-                                        ?>
-                                    </div>
-                                    <span>Medicamentos que no se pueden administrar</span>
-                                    <input type="text" name="medicines" id="">
-                                    <span>Antecedentes de alergias</span>
-                                    <input type="text" name="allergies" id="">
-                                    <button type="submit">Enviar</button>
+                                <span>Vacunas</span>
+                                <div class="bloque">
+                                    <?php
+                                        for($i=0; $i<count($vaccines); $i++){
+                                            echo "<label><input type=\"checkbox\" name=\"vaccines[]\" value=\"$vaccines[$i]\">$vaccines[$i]</label>";
+                                        }
+                                    ?>
                                 </div>
+                                <span>Medicamentos que no se pueden administrar</span>
+                                <input type="text" name="medicines">
+                                <span>Antecedentes de alergias</span>
+                                <input type="text" name="allergies">
+                                <button type="submit">Enviar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -119,7 +117,7 @@
     <div class="overlay-app"></div>
     </div>
     <script>
-        let target = $(location).attr('hash').substring(0, $(location).attr('hash').indexOf("?")) || $(location).attr('hash') || '#boton-azul';
+        let target = $(location).attr('hash') || '#boton-azul';
         $('.main-container > div').not(target).hide();
         $(target).fadeIn(600);
         $('.header-menu a').on('click', function (e) {
@@ -135,6 +133,16 @@
         document.querySelector('.dark-light').addEventListener('click', () => {
             document.body.classList.toggle('light-mode');
         });
+        function newAlert(e){
+                $.ajax({
+                    type:"POST",
+                    url: "./alerta.php",
+                    data: { ubi: e.getAttribute("data-zona"), type: 1 },
+                    success: (res) => {
+                        alert(res)
+                    }
+                })
+        }
     </script>
 </body>
 
