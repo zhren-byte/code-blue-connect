@@ -16,6 +16,8 @@
         if($_GET['date'] != '') $search .= " AND notificaciones.date LIKE  '%$_GET[date]%'";
     if(isset($_GET['time']))
         if($_GET['time'] != '') $search .= " AND notificaciones.time LIKE '%$_GET[time]%'";
+    if(isset($_GET['desde']))
+        if($_GET['desde'] != '' && $_GET['hasta'] != '') $search .= " AND notificaciones.date BETWEEN '$_GET[desde]' AND '$_GET[hasta]'";
     
     $query = "SELECT notificaciones.id, notificaciones.status_id, notificaciones.date, notificaciones.time, ubicaciones.name AS origen, zonas.name AS zona, llamados.name AS tipo FROM notificaciones LEFT JOIN ubicaciones ON notificaciones.ubi_id = ubicaciones.id LEFT JOIN zonas ON ubicaciones.zone_id = zonas.id LEFT JOIN llamados ON notificaciones.type_id = llamados.id WHERE $search ORDER BY notificaciones.status_id ASC";
     $result = $conn->query($query);

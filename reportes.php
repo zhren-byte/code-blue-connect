@@ -143,7 +143,8 @@ $id = $_SESSION['user']['id'];
                                 <option value="1">Atendidos</option>
                             </select>
                             <input type="date" id="dia" onchange=search()>
-                            <input type="time" id="horario" onchange=search()>
+                            <input type="date" id="desde" onchange=search()>
+                            <input type="date" id="hasta" onchange=search()>
                         </div>
                     </div>
                     <div class="content-section">
@@ -262,7 +263,7 @@ $id = $_SESSION['user']['id'];
     <div class="overlay-app"></div>
     </div>
     <script>
-        let target = $(location).attr('hash').substring(0, $(location).attr('hash').indexOf("?")) || $(location).attr('hash') || '#llamados';
+        let target = $(location).attr('hash') || '#llamados';
         $('.main-container > div + div').not(target).hide();
         $(target).fadeIn(600);
         $('.main-header .header-menu a').on('click', function (e) {
@@ -277,7 +278,7 @@ $id = $_SESSION['user']['id'];
 
         });
         function search(){
-            parametros = {"search" : $('.search-bar input').val().toLowerCase(), "zonas": $('#zonas').val(), "tipos": $('#tipos').val(), "estados": $('#estados').val() , "date": $('#dia').val(), "time": $('#horario').val()};
+            parametros = {"search" : $('.search-bar input').val().toLowerCase(), "zonas": $('#zonas').val(), "tipos": $('#tipos').val(), "estados": $('#estados').val() , "date": $('#dia').val(), "time": $('#horario').val(), "desde": $('#desde').val(), "hasta": $('#hasta').val()};
             $.ajax({
                 type:"GET",
                 url: "./notifications.php",
