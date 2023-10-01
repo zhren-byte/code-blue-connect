@@ -19,6 +19,8 @@ $id = $_SESSION['user']['id'];
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script src="./assets/js/jquery.min.js"></script>
     <script src="./assets/js/chart.js"></script>
     <title>&lt; \ BlueConnect \ Admin &gt;</title>
@@ -158,12 +160,14 @@ $id = $_SESSION['user']['id'];
                             <option value="trimester">Últimos tres meses</option>
                             <option value="year">Último año</option>
                         </select>
-
+                        <button id="download">Descargar Reporte PDF</button>
                         <div class="chart-wrapper" style="width: 800px; margin: 20px auto 0 auto">
                             <canvas id="graphics"></canvas>
                         </div>
 
                         <script>
+                            window.jsPDF = window.jspdf.jsPDF;
+
                             const ctx = document.getElementById('graphics');
                             const timeSelect = document.querySelector(".time-select");
                             
@@ -254,6 +258,15 @@ $id = $_SESSION['user']['id'];
                                 }
                                 initializeChart(option);
                             });
+                            
+                            download.addEventListener("click", function() {
+                                var imgData = ctx.toDataURL('image/jpeg', 1.0);
+                                var pdf = new jsPDF();
+                                pdf.addImage(imgData, 'JPEG', 0, 0);
+                                pdf.save('reporte.pdf')
+                                
+
+                            });
                         </script>
                     </div>
                 </div>
@@ -262,6 +275,7 @@ $id = $_SESSION['user']['id'];
     <div class="overlay-app"></div>
     </div>
     <script>
+        
         let target = $(location).attr('hash').substring(0, $(location).attr('hash').indexOf("?")) || $(location).attr('hash') || '#llamados';
         $('.main-container > div + div').not(target).hide();
         $(target).fadeIn(600);
