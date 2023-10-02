@@ -290,7 +290,7 @@ $id = $_SESSION['user']['id'];
                                 <?php } ?>
                                     <li class="dropdown-create">
                                         <form action="./create" method="POST" class="form-create">
-                                            <input type="text" name="name_ubi" placeholder="Nombre de Ubicacion" /><input type="hidden" name="zone_id" value="<?php echo $row['id'] ?>"/>
+                                            <input type="text" name="name_ubi" placeholder="Nombre de Ubicación" /><input type="hidden" name="zone_id" value="<?php echo $row['id'] ?>"/>
                                             <span class="status"></span>
                                             <div class="button-wrapper">
                                                 <button class='content-button status-button' name="ubicacion">Agregar</button>
@@ -538,7 +538,7 @@ $id = $_SESSION['user']['id'];
                                 <th>Nombre</th>
                                 <th>Apellido</th>
                                 <th style="width: 150px;">Zona</th>
-                                <th style="width: 150px;">Ubicacion</th>
+                                <th style="width: 150px;">Ubicación</th>
                                 <th style="width: 200px;">Opciones</th>
                             </tr>
                             <?php
@@ -577,7 +577,7 @@ $id = $_SESSION['user']['id'];
                                     <tr>
                                         <th>Nombre</th>
                                         <th>Apellido</th>
-                                        <th style="width: 240px;">Ubicacion</th>
+                                        <th style="width: 240px;">Ubicación</th>
                                         <th style="width: 150px;">Opciones</th>
                                     </tr>
                                     <tr>
@@ -693,27 +693,28 @@ $id = $_SESSION['user']['id'];
                             <span class="nombre">${res.name} ${res.surname}</span>
                             <span>DNI: ${res.dni}</span>
                             <span>Fecha de Nacimiento: ${res.birthdate}</span>
-                            <span>Telefono: ${res.phone}</span>
-                            <span>Direccion: ${res.direction} N°${res.number} Piso: ${res.floor} Dto. ${res.department}</span>
+                            <span>Teléfono: ${res.phone}</span>
+                            <span>Dirección: ${res.direction} N°${res.number} Piso: ${res.floor} Dto. ${res.department}</span>
                             <span>Localidad: ${res.location}</span>
                             <span>Enfermedades padecidas: ${res.diseases}</span>
                             <span>Vacunas: ${res.vaccines}</span>
                             <span>Medicinas que no debe tomar: ${res.medicines}</span>
                             <span>Alergias: ${res.allergies}</span>
                         `
-                        const content = `
-                            Nombre: ${res.name} ${stripHtml(res.surname)}
-                            DNI: ${stripHtml(res.dni)}
-                            Fecha de Nacimiento: ${stripHtml(res.birthdate)}
-                            Teléfono: ${stripHtml(res.phone)}
-                            Dirección: ${stripHtml(res.direction)} N°${stripHtml(res.number)} Piso: ${stripHtml(res.floor)} Dto. ${stripHtml(res.department)}
-                            Localidad: ${stripHtml(res.location)}
-                            Enfermedades padecidas: ${stripHtml(res.diseases)}
-                            Vacunas: ${stripHtml(res.vaccines)}
-                            Medicinas que no debe tomar: ${stripHtml(res.medicines)}
-                            Alergias: ${stripHtml(res.allergies)}
-                        `;
-                        pdf.text(content, 10, 10);
+                        pdf.setFontSize(30);
+                        pdf.setFont("helvetica", "bold");
+                        pdf.text(`${res.name} ${res.surname}`, 10, 20)
+                        pdf.setFontSize(20);
+                        pdf.setFont("helvetica", "normal");
+                        pdf.text(`DNI: ${res.dni}`, 10, 36)
+                        pdf.text(`Fecha de Nacimiento: ${res.birthdate}`, 10, 44)
+                        pdf.text(`Teléfono: ${res.phone}`, 10, 52)
+                        pdf.text(`Dirección: ${res.direction} N°${res.number} Piso: ${res.floor} Dto. ${res.department}`, 10, 60)
+                        pdf.text(`Localidad: ${res.location}`, 10, 68)
+                        pdf.text(`Enfermedades padecidas: ${res.diseases}`, 10, 76)
+                        pdf.text(`Vacunas: ${res.vaccines}`, 10, 84)
+                        pdf.text(`Medicinas que no debe tomar: ${res.medicines}`, 10, 92)
+                        pdf.text(`Alergias: ${res.allergies}`, 10, 100)
                         pdf.save('ficha-medica.pdf');
                         document.querySelector(".modal-medico").classList.add('modal--show')
                     }

@@ -145,8 +145,23 @@ $id = $_SESSION['user']['id'];
                                 <option value="1">Atendidos</option>
                             </select>
                             <input type="date" id="dia" onchange=search()>
-                            <input type="date" id="desde" onchange=search()>
-                            <input type="date" id="hasta" onchange=search()>
+                            <button class="dropdown">Intervalo
+                                <div class="interval">
+                                    Desde:
+                                    <input type="date" id="desde_fecha" onchange=search()>
+                                    Hasta:
+                                    <input type="date" id="hasta_fecha" onchange=search()>
+                                </div>
+                            </button>
+                            <button class="dropdown">Tiempo
+                                <div class="interval">
+                                    Desde:
+                                    <input type="time" id="desde_tiempo" onchange=search()>
+                                    Hasta:
+                                    <input type="time" id="hasta_tiempo" onchange=search()>
+                                </div>
+                            </button>
+                            <button onclick=reset()>Reiniciar Filtros</button>
                         </div>
                     </div>
                     <div class="content-section">
@@ -180,10 +195,10 @@ $id = $_SESSION['user']['id'];
                                     return ($hms[0]*3600+$hms[1]*60+$hms[2]);
                                 }
                                 $conn->query("SET lc_time_names = 'es_AR'"); 
-                                $week = $conn->query("SELECT DAYNAME(date) AS dia, COUNT(date) AS count, GROUP_CONCAT(time, '-', time_response) AS time FROM `notificaciones` GROUP BY DAYNAME(date)");
-                                $dias = []; $dia_count = []; $tiempo = [];
+                                $week = $conn->query("SELECT DAYNAME(date) AS dia, COUNT(date) AS count, GROUP_CONCAT(time, '-', time_response) AS time FROM `notificaciones` WHERE date between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY DAYNAME(date) ORDER BY CASE WHEN DAYNAME(date) = 'Domingo' THEN 1 WHEN DAYNAME(date) = 'Lunes' THEN 2 WHEN DAYNAME(date) = 'Martes' THEN 3 WHEN DAYNAME(date) = 'Miércoles' THEN 4 WHEN DAYNAME(date) = 'Jueves' THEN 5 WHEN DAYNAME(date) = 'Viernes' THEN 6 WHEN DAYNAME(date) = 'Sábado' THEN 7 END ASC");
+                                $week_dia = []; $dia_count = []; $tiempo = [];
                                 while($row = $week->fetch_assoc()){
-                                    array_push($dias, ucfirst($row['dia'])); array_push($dia_count, $row['count']);
+                                    array_push($week_dia, ucfirst($row['dia'])); array_push($dia_count, $row['count']);
                                     $timeResponse = 0;
                                     $i = 0;
                                     while ($i < count(explode(',',$row['time']))) {
@@ -196,7 +211,7 @@ $id = $_SESSION['user']['id'];
                                 }
                             ?>
                             const weekOption = {
-                                labels: <?php echo json_encode($dias) ?>,
+                                labels: <?php echo json_encode($week_dia) ?>,
                                 datasets: [
                                     {
                                         label: 'Pacientes atendidos',
@@ -208,15 +223,38 @@ $id = $_SESSION['user']['id'];
                                     }
                                 ]
                             };
+                            <?php 
+                                $last_month = $conn->query("SELECT DAYNAME(date) AS dia, COUNT(date) AS count, GROUP_CONCAT(time, '-', time_response) AS time FROM `notificaciones` WHERE date between date_sub(now(),INTERVAL 1 MONTH) and now() GROUP BY DAYNAME(date) ORDER BY CASE WHEN DAYNAME(date) = 'Domingo' THEN 1 WHEN DAYNAME(date) = 'Lunes' THEN 2 WHEN DAYNAME(date) = 'Martes' THEN 3 WHEN DAYNAME(date) = 'Miércoles' THEN 4 WHEN DAYNAME(date) = 'Jueves' THEN 5 WHEN DAYNAME(date) = 'Viernes' THEN 6 WHEN DAYNAME(date) = 'Sábado' THEN 7 END ASC");
+                                $last_month_dia = []; $last_month_dia_count = [];
+                                while($row = $last_month->fetch_assoc()){
+                                    array_push($last_month_dia, ucfirst($row['dia'])); 
+                                    array_push($last_month_dia_count, $row['count']);
+                                }
+                            ?>
                             const monthOption = {
-                                labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                                labels: <?php echo json_encode($last_month_dia) ?>,
                                 datasets: [{
                                     label: 'Pacientes atendidos',
-                                    data: [120, 92, 54, 123, 233, 75, 132, 175, 103, 85, 92, 63],
+                                    data: <?php echo json_encode($last_month_dia_count) ?>,
                                 }]
                             };
                             <?php 
-                                $year = $conn->query("SELECT MONTHNAME(date) AS mes, COUNT(date) AS count FROM `notificaciones` GROUP BY MONTHNAME(date)");
+                                $three_month = $conn->query("SELECT DAYNAME(date) AS dia, COUNT(date) AS count, GROUP_CONCAT(time, '-', time_response) AS time FROM `notificaciones` WHERE date between date_sub(now(),INTERVAL 3 MONTH) and now() GROUP BY DAYNAME(date) ORDER BY CASE WHEN DAYNAME(date) = 'Domingo' THEN 1 WHEN DAYNAME(date) = 'Lunes' THEN 2 WHEN DAYNAME(date) = 'Martes' THEN 3 WHEN DAYNAME(date) = 'Miércoles' THEN 4 WHEN DAYNAME(date) = 'Jueves' THEN 5 WHEN DAYNAME(date) = 'Viernes' THEN 6 WHEN DAYNAME(date) = 'Sábado' THEN 7 END ASC");
+                                $three_month_dia = []; $three_month_dia_count = [];
+                                while($row = $three_month->fetch_assoc()){
+                                    array_push($three_month_dia, ucfirst($row['dia'])); 
+                                    array_push($three_month_dia_count, $row['count']);
+                                }
+                            ?>
+                            const trimesterOption = {
+                                labels: <?php echo json_encode($three_month_dia) ?>,
+                                datasets: [{
+                                    label: 'Pacientes atendidos',
+                                    data: <?php echo json_encode($three_month_dia_count) ?>,
+                                }]
+                            };
+                            <?php 
+                                $year = $conn->query("SELECT MONTHNAME(date) AS mes, COUNT(date) AS count FROM `notificaciones` GROUP BY MONTHNAME(date) ORDER BY CASE WHEN MONTHNAME(date) = 'Enero' THEN 1 WHEN MONTHNAME(date) = 'Febrero' THEN 2 WHEN MONTHNAME(date) = 'Marzo' THEN 3 WHEN MONTHNAME(date) = 'Abril' THEN 4 WHEN MONTHNAME(date) = 'Mayo' THEN 5 WHEN MONTHNAME(date) = 'Junio' THEN 6 WHEN MONTHNAME(date) = 'Julio' THEN 7 WHEN MONTHNAME(date) = 'Agosto' THEN 8 WHEN MONTHNAME(date) = 'Septiembre' THEN 9 WHEN MONTHNAME(date) = 'Octubre' THEN 10 END ASC;");
                                 $meses = []; $mes_count = [];
                                 while($row = $year->fetch_assoc()){
                                     array_push($meses, ucfirst($row['mes']));
@@ -256,6 +294,8 @@ $id = $_SESSION['user']['id'];
                                     option = weekOption;
                                 } else if (e.target.value === "month") {
                                     option = monthOption;
+                                } else if (e.target.value === "trimester") {
+                                    option = trimesterOption;
                                 } else if (e.target.value === "year") {
                                     option = yearOption;
                                 }
@@ -290,8 +330,12 @@ $id = $_SESSION['user']['id'];
             $(target).fadeIn(600);
 
         });
+        function reset(){
+            $('input').val('');
+            search();
+        }
         function search(){
-            parametros = {"search" : $('.search-bar input').val().toLowerCase(), "zonas": $('#zonas').val(), "tipos": $('#tipos').val(), "estados": $('#estados').val() , "date": $('#dia').val(), "time": $('#horario').val(), "desde": $('#desde').val(), "hasta": $('#hasta').val()};
+            parametros = {"search" : $('.search-bar input').val().toLowerCase(), "zonas": $('#zonas').val(), "tipos": $('#tipos').val(), "estados": $('#estados').val() , "date": $('#dia').val(), "desde_fecha": $('#desde_fecha').val(), "hasta_fecha": $('#hasta_fecha').val(), "desde_tiempo": $('#desde_tiempo').val(), "hasta_tiempo": $('#hasta_tiempo').val()};
             $.ajax({
                 type:"GET",
                 url: "./notifications.php",
