@@ -6,7 +6,7 @@
 :root {
   --body-font: sans-serif;
   --content-bg: rgb(146 151 179 / 13%);
-  --theme-bg-color: rgba(16 18 27 / 40%);
+  --theme-bg-color: rgba(16, 18, 27, 0.4);
   --theme-color: #f9fafb;
   --inactive-color: rgb(113 119 144 / 78%);
   --button-inactive: rgb(249 250 251 / 55%);
