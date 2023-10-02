@@ -43,7 +43,7 @@
         <div class="header">
             <div class="menu-circle"></div>
             <div class="header-menu">
-                <a class="menu-link is-active" href="#boton-azul">Boton Azul</a>
+                <a class="menu-link is-active main-header-link" href="#boton-azul">Boton Azul</a>
                 <a class="menu-link " href="#ficha-medica">Ficha Medica</a>
             </div>
             <div class="header-profile">
@@ -64,7 +64,7 @@
         <div class="wrapper">
             <div class="main-container">
                 <div class="content-wrapper" id="boton-azul">
-                    <div class="content-section" style="height: 100%; display: flex; flex-direction: row;">
+                    <div class="content-section blue">
                             <?php while($row = $zonas->fetch_assoc()){ ?>
                                 <button id="button" data-zona="<?php echo $row['id'] ?>" onclick=newAlert(this)><?php echo $row['zona'] ?><br><?php echo $row['name'] ?></button>
                             <?php } ?>
