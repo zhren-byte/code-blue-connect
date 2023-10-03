@@ -32,7 +32,7 @@
     <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
 </head>
 
-<body>
+<body onload=alertas()>
     <div class="dark-light">
         <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"
             stroke-linejoin="round">
@@ -65,9 +65,10 @@
             <div class="main-container">
                 <div class="content-wrapper" id="boton-azul">
                     <div class="content-section blue">
-                            <?php while($row = $zonas->fetch_assoc()){ ?>
-                                <button id="button" data-zona="<?php echo $row['id'] ?>" onclick=newAlert(this)><?php echo $row['zona'] ?><br><?php echo $row['name'] ?></button>
-                            <?php } ?>
+                        <ul></ul>
+                        <?php while($row = $zonas->fetch_assoc()){ ?>
+                            <button id="button" data-zona="<?php echo $row['id'] ?>" onclick=newAlert(this)><?php echo $row['zona'] ?><br><?php echo $row['name'] ?></button>
+                        <?php } ?>
                     </div>
                 </div>
                 <div class="content-wrapper" id="ficha-medica">
@@ -128,21 +129,46 @@
 
             $('.main-container > div').not(target).hide();
             $(target).fadeIn(600);
-
         });
         document.querySelector('.dark-light').addEventListener('click', () => {
             document.body.classList.toggle('light-mode');
         });
         function newAlert(e){
-                $.ajax({
-                    type:"POST",
-                    url: "./alerta.php",
-                    data: { ubi: e.getAttribute("data-zona"), type: 1 },
-                    success: (res) => {
-                        alert(res)
-                    }
-                })
+            $.ajax({
+                type:"POST",
+                url: "./alerta.php",
+                data: { ubi: e.getAttribute("data-zona"), type: 1 },
+                success: (res) => {
+                    alert(res)
+                }
+            })
         }
+        function alertas() {
+            $.ajax({
+                url: "./alertas.php",
+                success: (res) => {
+                    $('#boton-azul .content-section ul').html(res);
+                }
+            })
+        }
+        function resolver(e){
+            const data = e.getAttribute("data-update").split(',');
+            $.ajax({
+                type:"GET",
+                url: "./update.php",
+                data: { id: data[0], table: 'notificaciones', status_id: data[1] },
+                success: () => {
+                    if(data[1] == 'true'){
+                        e.parentElement.parentElement.children[1].innerHTML = `<span class='status-circle green'></span>Atendido`
+                        e.outerHTML = `<a onClick=\"resolver(this)\" data-update=\"${data[0]},false\"><button class='content-button status-button open'>Resuelto</button></a>`
+                    }else{
+                        e.parentElement.parentElement.children[1].innerHTML = `<span class='status-circle red'></span>No atendido`
+                        e.outerHTML = `<a onClick="resolver(this)" data-update="${data[0]},true"><button class='content-button status-button'>Resolver</button></a>`
+                    }
+                }
+            })
+        }
+        setInterval(alertas, 1000);
     </script>
 </body>
 

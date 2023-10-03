@@ -20,7 +20,7 @@
         if($_GET['desde_fecha'] != '' && $_GET['hasta_fecha'] != '') $search .= " AND notificaciones.date BETWEEN '$_GET[desde_fecha]' AND '$_GET[hasta_fecha]'";
     if(isset($_GET['desde_tiempo']))
         if($_GET['desde_tiempo'] != '' && $_GET['hasta_tiempo'] != '') $search .= " AND notificaciones.time BETWEEN '$_GET[desde_tiempo]' AND '$_GET[hasta_tiempo]'";
-    $query = "SELECT notificaciones.id, notificaciones.status_id, notificaciones.date, notificaciones.time, ubicaciones.name AS origen, zonas.name AS zona, llamados.name AS tipo FROM notificaciones LEFT JOIN ubicaciones ON notificaciones.ubi_id = ubicaciones.id LEFT JOIN zonas ON ubicaciones.zone_id = zonas.id LEFT JOIN llamados ON notificaciones.type_id = llamados.id WHERE $search ORDER BY notificaciones.status_id ASC LIMIT 15";
+    $query = "SELECT notificaciones.id, notificaciones.status_id, notificaciones.date, notificaciones.time, ubicaciones.name AS origen, zonas.name AS zona, llamados.name AS tipo FROM notificaciones LEFT JOIN ubicaciones ON notificaciones.ubi_id = ubicaciones.id LEFT JOIN zonas ON ubicaciones.zone_id = zonas.id LEFT JOIN llamados ON notificaciones.type_id = llamados.id WHERE $search ORDER BY notificaciones.date DESC, notificaciones.time ASC LIMIT 15";
     $result = $conn->query($query);
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) { 

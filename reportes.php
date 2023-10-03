@@ -203,7 +203,12 @@ $id = $_SESSION['user']['id'];
                                     $i = 0;
                                     while ($i < count(explode(',',$row['time']))) {
                                         $time = explode('-', (explode(',',$row['time']))[$i]);
-                                        $timeResponse += getSec($time[1]) - getSec($time[0]);
+                                        if(getSec($time[1]) < getSec($time[0])){
+                                            $timeRes = getSec($time[1])+86400;
+                                        }else{
+                                            $timeRes = getSec($time[1]);
+                                        }
+                                        $timeResponse += $timeRes - getSec($time[0]);
                                         $i++;
                                     }
                                     $timeResponse /= $i;
