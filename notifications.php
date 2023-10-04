@@ -1,6 +1,10 @@
 <?php
     include('./connection.php');
     $search = '1';
+    $limit = 0;
+    if(isset($_GET['limit'])){ 
+        if($_GET['limit'] != '') $limit = ($_GET['limit']-1)*10;
+    }
     if(isset($_GET['search'])){ 
         if($_GET['search'] == 'atendidos' || $_GET['search'] == 'atendido') $search = "notificaciones.status_id = 1";
         else if($_GET['search'] == 'no atendidos' || $_GET['search'] == 'no atendido') $search = "notificaciones.status_id = 0";
@@ -20,7 +24,7 @@
         if($_GET['desde_fecha'] != '' && $_GET['hasta_fecha'] != '') $search .= " AND notificaciones.date BETWEEN '$_GET[desde_fecha]' AND '$_GET[hasta_fecha]'";
     if(isset($_GET['desde_tiempo']))
         if($_GET['desde_tiempo'] != '' && $_GET['hasta_tiempo'] != '') $search .= " AND notificaciones.time BETWEEN '$_GET[desde_tiempo]' AND '$_GET[hasta_tiempo]'";
-    $query = "SELECT notificaciones.id, notificaciones.status_id, notificaciones.date, notificaciones.time, ubicaciones.name AS origen, zonas.name AS zona, llamados.name AS tipo FROM notificaciones LEFT JOIN ubicaciones ON notificaciones.ubi_id = ubicaciones.id LEFT JOIN zonas ON ubicaciones.zone_id = zonas.id LEFT JOIN llamados ON notificaciones.type_id = llamados.id WHERE $search ORDER BY notificaciones.date DESC, notificaciones.time DESC LIMIT 15";
+    $query = "SELECT notificaciones.id, notificaciones.status_id, notificaciones.date, notificaciones.time, ubicaciones.name AS origen, zonas.name AS zona, llamados.name AS tipo FROM notificaciones LEFT JOIN ubicaciones ON notificaciones.ubi_id = ubicaciones.id LEFT JOIN zonas ON ubicaciones.zone_id = zonas.id LEFT JOIN llamados ON notificaciones.type_id = llamados.id WHERE $search ORDER BY notificaciones.date DESC, notificaciones.time DESC LIMIT 10 OFFSET $limit";
     $result = $conn->query($query);
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) { 

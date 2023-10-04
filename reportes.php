@@ -10,6 +10,7 @@ if (!isset($_SESSION['user'])) {
     ');
 }
 $id = $_SESSION['user']['id'];
+$max = $conn->query("SELECT COUNT(id) FROM notificaciones")->fetch_assoc();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -162,6 +163,14 @@ $id = $_SESSION['user']['id'];
                                 </div>
                             </button>
                             <button onclick=reset()>Reiniciar Filtros</button>
+                            <select id="limit" onchange=search()>
+                                <?php
+                                    for($i=1; $i<($max['COUNT(id)']/10+1);$i++){
+                                        echo "<option value=\"$i\">Pag. $i</option>";
+                                    }
+                                    //Calcular cuantas paginas hay en la query
+                                ?>
+                            </select>
                         </div>
                     </div>
                     <div class="content-section">
@@ -340,7 +349,7 @@ $id = $_SESSION['user']['id'];
             search();
         }
         function search(){
-            parametros = {"search" : $('.search-bar input').val().toLowerCase(), "zonas": $('#zonas').val(), "tipos": $('#tipos').val(), "estados": $('#estados').val() , "date": $('#dia').val(), "desde_fecha": $('#desde_fecha').val(), "hasta_fecha": $('#hasta_fecha').val(), "desde_tiempo": $('#desde_tiempo').val(), "hasta_tiempo": $('#hasta_tiempo').val()};
+            parametros = {"limit" : $('#limit').val()," search" : $('.search-bar input').val().toLowerCase(), "zonas": $('#zonas').val(), "tipos": $('#tipos').val(), "estados": $('#estados').val() , "date": $('#dia').val(), "desde_fecha": $('#desde_fecha').val(), "hasta_fecha": $('#hasta_fecha').val(), "desde_tiempo": $('#desde_tiempo').val(), "hasta_tiempo": $('#hasta_tiempo').val()};
             $.ajax({
                 type:"GET",
                 url: "./notifications.php",

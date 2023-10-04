@@ -120,6 +120,7 @@ $id = $_SESSION['user']['id'];
                         <table>
                             <tr>
                                 <th style="width: 16%;">Nombre</th>
+                                <th style="width: 16%;">Apellido</th>
                                 <th style="width: 19%;">Usuario</th>
                                 <th>¿Autenticidad?</th>
                                 <th style="width: 160px;">Rol</th>
@@ -131,6 +132,7 @@ $id = $_SESSION['user']['id'];
                                 while ($row = $result->fetch_assoc()) { ?>
                                     <tr>
                                         <td><?php echo $row["name"] ?></td>
+                                        <td><?php echo $row["surname"] ?></td>
                                         <td><?php echo $row["user"] ?></td>
                                         <td>
                                             <?php if (password_verify('', $row["password"]))
@@ -160,11 +162,12 @@ $id = $_SESSION['user']['id'];
                             ?>
                             <tr>
                                 <form action="./create" method="post">
-                                    <td><input type="text" name="name" id="name" placeholder="Nombre"></td>
-                                    <td><input type="text" name="username" id="username" placeholder="Nombre de usuario"></td>
-                                    <td><input type="password" name="password" id="password" placeholder="Contraseña"></td>
+                                    <td><input type="text" name="name" placeholder="Nombre"></td>
+                                    <td><input type="text" name="surname" placeholder="Apellido"></td>
+                                    <td><input type="text" name="username" placeholder="Nombre de usuario"></td>
+                                    <td><input type="password" name="password" placeholder="Contraseña"></td>
                                     <td>
-                                        <select name="rol_id" id="rol_id">
+                                        <select name="rol_id">
                                             <?php
                                             $result = $conn->query("SELECT * FROM roles");
                                             if ($result->num_rows > 0) {
@@ -202,6 +205,7 @@ $id = $_SESSION['user']['id'];
                                 <table>
                                     <tr>
                                         <th style="width: 16%;">Nombre</th>
+                                        <th style="width: 16%;">Apellido</th>
                                         <th style="width: 19%;">Usuario</th>
                                         <th>Contraseña</th>
                                         <th style="width: 160px;">Rol</th>
@@ -209,14 +213,16 @@ $id = $_SESSION['user']['id'];
                                     </tr>
                                     <tr>
                                         <form action="./update?id=<?php echo $user['id'] ?>&table=usuarios" method="post">
-                                            <td><input type="text" name="name" id="name_new" placeholder="Nombre"
+                                            <td><input type="text" name="name" placeholder="Nombre" autocomplete="off"
                                                     value="<?php echo $user['name'] ?>"></td>
-                                            <td><input type="text" name="username" id="username" placeholder="Nombre de usuario"
+                                            <td><input type="text" name="surname" placeholder="Nombre" autocomplete="off"
+                                                    value="<?php echo $user['surname'] ?>"></td>
+                                            <td><input type="text" name="username" placeholder="Nombre de usuario" autocomplete="off"
                                                     value="<?php echo $user['user'] ?>"></td>
-                                            <td><input type="password" name="password" id="password" placeholder="***********"
+                                            <td><input type="password" name="password" placeholder="***********" autocomplete="off"
                                                     value=""></td>
                                             <td>
-                                                <select name="rol_id" id="rol_id">
+                                                <select name="rol_id">
                                                     <?php
                                                     $roles = $conn->query("SELECT * FROM roles");
                                                     if ($roles->num_rows > 0) {
@@ -343,7 +349,7 @@ $id = $_SESSION['user']['id'];
                                     </tr>
                                     <tr>
                                         <form action="./update?id=<?php echo $user['id'] ?>&table=zonas" method="post">
-                                            <td><input type="text" name="name_zona" id="name_new" placeholder="Nombre" value="<?php echo $user['name'] ?>"></td>
+                                            <td><input type="text" name="name_zona" placeholder="Nombre" value="<?php echo $user['name'] ?>"></td>
                                             <td>
                                                 <div class="button-wrapper">
                                                     <button class='content-button status-button' type="submit" name="zona">Aceptar</button>
@@ -367,9 +373,9 @@ $id = $_SESSION['user']['id'];
                                     </tr>
                                     <tr>
                                         <form action="./update?id=<?php echo $user['id'] ?>&table=ubicaciones" method="post">
-                                            <td><input type="text" name="name_ubi" id="name_ubi" placeholder="Nombre" value="<?php echo $user['name'] ?>"></td>
+                                            <td><input type="text" name="name_ubi" placeholder="Nombre" value="<?php echo $user['name'] ?>"></td>
                                             <td>
-                                                <select name="zone_id" id="zone_id">
+                                                <select name="zone_id">
                                                     <?php
                                                     $roles = $conn->query("SELECT id, name FROM zonas");
                                                     if ($roles->num_rows > 0) {
@@ -400,15 +406,15 @@ $id = $_SESSION['user']['id'];
                         <table>
                             <tr>
                                 <th>Nombre</th>
-                                <th style="width: 160px;">Zona</th>
+                                <th style="width: 200px;">Zona</th>
                                 <th style="width: 150px;">Opciones</th>
                             </tr>
                             <?php
-                            $result = $conn->query("SELECT usuarios.name, zonas.name AS zona, enfermeros.id FROM enfermeros INNER JOIN usuarios ON usuarios.id = enfermeros.user_id INNER JOIN zonas ON enfermeros.zone_id = zonas.id WHERE rol_id = 2");
+                            $result = $conn->query("SELECT usuarios.name, usuarios.surname, zonas.name AS zona, enfermeros.id FROM enfermeros INNER JOIN usuarios ON usuarios.id = enfermeros.user_id INNER JOIN zonas ON enfermeros.zone_id = zonas.id WHERE rol_id = 2");
                             if ($result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) { ?>
                                     <tr>
-                                        <td><?php echo $row["name"] ?></td>
+                                        <td><?php echo $row["name"]. ' '. $row["surname"] ?></td>
                                         <td><?php echo $row["zona"] ?></td>
                                         <td>
                                             <div class="button-wrapper">
@@ -430,19 +436,19 @@ $id = $_SESSION['user']['id'];
                             <tr>
                                 <form action="./create" method="post">
                                     <td>
-                                        <select name="user_id" id="user_id">
+                                        <select name="user_id">
                                             <?php
                                             $result = $conn->query("SELECT * FROM usuarios WHERE rol_id=2");
                                             if ($result->num_rows > 0) {
                                                 while ($row = $result->fetch_assoc()) {
-                                                    echo "<option value='$row[id]'>$row[name]</option>";
+                                                    echo "<option value='$row[id]'>$row[name] $row[surname]</option>";
                                                 }
                                             }
                                             ?>
                                         </select>
                                     </td>
                                     <td>
-                                        <select name="zone_id" id="zone_id">
+                                        <select name="zone_id">
                                             <?php
                                             $result = $conn->query("SELECT * FROM zonas");
                                             if ($result->num_rows > 0) {
@@ -480,13 +486,14 @@ $id = $_SESSION['user']['id'];
                                 <table>
                                     <tr>
                                         <th>Nombre</th>
-                                        <th style="width: 160px;">Zona</th>
+                                        <th>Apellido</th>
+                                        <th style="width: 200px;">Zona</th>
                                         <th style="width: 150px;">Opciones</th>
                                     </tr>
                                     <tr>
                                         <form action="./update?id=<?php echo $user['id'] ?>&table=enfermeros" method="post">
                                             <td>
-                                                <select name="user_id_enf" id="user_id">
+                                                <select name="user_id_enf">
                                                     <?php
                                                     $result = $conn->query("SELECT * FROM usuarios WHERE rol_id=2");
                                                     if ($result->num_rows > 0) {
@@ -502,7 +509,7 @@ $id = $_SESSION['user']['id'];
                                                 </select>
                                             </td>
                                             <td>
-                                                <select name="zone_id_enf" id="zone_id">
+                                                <select name="zone_id_enf">
                                                     <?php
                                                     $result = $conn->query("SELECT * FROM zonas");
                                                     if ($result->num_rows > 0) {
@@ -582,8 +589,8 @@ $id = $_SESSION['user']['id'];
                                     </tr>
                                     <tr>
                                         <form action="./update?id=<?php echo $user['id'] ?>&table=pacientes" method="post">
-                                            <td><input type="text" name="name" id="name_pac" placeholder="Nombre" value="<?php echo $user['name'] ?>"></td>
-                                            <td><input type="text" name="name" id="surname_pac" placeholder="Apellido" value="<?php echo $user['surname'] ?>"></td>
+                                            <td><input type="text" name="name" placeholder="Nombre" value="<?php echo $user['name'] ?>"></td>
+                                            <td><input type="text" name="name" placeholder="Apellido" value="<?php echo $user['surname'] ?>"></td>
                                             <td>
                                                 <select name="ubi_id_pac">
                                                     <?php

@@ -6,10 +6,11 @@
 
     if (isset($_POST['account'])) {
         $name = $_POST['name'];
+        $surname = $_POST['surname'];
         $username = $_POST['username'];
         $rol_id = $_POST['rol_id'];
         
-        $values = "`name`='$name', `user`='$username', `rol_id`='$rol_id'";
+        $values = "`name`='$name',`surname`='$surname', `user`='$username', `rol_id`='$rol_id'";
         if($_POST['password'] != ''){
             $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
             $values .= ", `password`='$password'";
