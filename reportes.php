@@ -168,7 +168,6 @@ $max = $conn->query("SELECT COUNT(id) FROM notificaciones")->fetch_assoc();
                                     for($i=1; $i<($max['COUNT(id)']/10+1);$i++){
                                         echo "<option value=\"$i\">Pag. $i</option>";
                                     }
-                                    //Calcular cuantas paginas hay en la query
                                 ?>
                             </select>
                         </div>
