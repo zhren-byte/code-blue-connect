@@ -184,6 +184,7 @@ $max = $conn->query("SELECT COUNT(id) FROM notificaciones")->fetch_assoc();
                                 <option value="month">Último mes</option>
                                 <option value="trimester">Últimos tres meses</option>
                                 <option value="year">Último año</option>
+                                <option value="zonas">Zonas</option>
                             </select>
                             <button id="download">Descargar Reporte PDF</button>
                         </div>
@@ -281,22 +282,29 @@ $max = $conn->query("SELECT COUNT(id) FROM notificaciones")->fetch_assoc();
                                     data: <?php echo json_encode($mes_count) ?>,
                                 }]
                             };
+                            <?php 
+                                $zona = $conn->query("SELECT zonas.name AS zona, COUNT(zonas.name) AS count FROM `notificaciones` INNER JOIN ubicaciones ON notificaciones.ubi_id = ubicaciones.id INNER JOIN zonas ON ubicaciones.zone_id = zonas.id GROUP BY zonas.name");
+                                $zonas = []; $zonas_count = [];
+                                while($row = $zona->fetch_assoc()){
+                                    array_push($zonas, ucfirst($row['zona']));
+                                    array_push($zonas_count, $row['count']);
+                                }
+                            ?>
+                            const zonasOption = {
+                                labels: <?php echo json_encode($zonas) ?>,
+                                datasets: [{
+                                    data: <?php echo json_encode($zonas_count) ?>
+                                }],
+                            };
 
                             let chart;
                             let option = weekOption;
-                            function initializeChart(dataOption) {
+                            function initializeChart(dataOption, typeOption) {
                                 if (chart) chart.destroy();
 
                                 chart = new Chart(ctx, {
-                                    type: 'bar',
-                                    data: dataOption,
-                                    options: {
-                                        scales: {
-                                            y: {
-                                                beginAtZero: true
-                                            }
-                                        }
-                                    }
+                                    type: typeOption ?? 'bar',
+                                    data: dataOption
                                 });
                             }
 
@@ -304,13 +312,20 @@ $max = $conn->query("SELECT COUNT(id) FROM notificaciones")->fetch_assoc();
 
                             timeSelect.addEventListener("change", e => {
                                 if (e.target.value === "week") {
+                                    document.querySelector('.chart-wrapper').style.width = '800px';
                                     option = weekOption;
                                 } else if (e.target.value === "month") {
+                                    document.querySelector('.chart-wrapper').style.width = '800px';
                                     option = monthOption;
                                 } else if (e.target.value === "trimester") {
+                                    document.querySelector('.chart-wrapper').style.width = '800px';
                                     option = trimesterOption;
                                 } else if (e.target.value === "year") {
+                                    document.querySelector('.chart-wrapper').style.width = '800px';
                                     option = yearOption;
+                                } else if (e.target.value === "zonas") {
+                                    document.querySelector('.chart-wrapper').style.width = '500px';
+                                    return initializeChart(zonasOption, 'pie')
                                 }
                                 initializeChart(option);
                             });
